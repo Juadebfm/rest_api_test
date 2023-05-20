@@ -1,55 +1,24 @@
 import express from "express";
 
-import { v4 as uuidv4 } from "uuid";
+import {
+  createStudent,
+  getStudent,
+  getStudentById,
+  deleteStudents,
+  updateStudentInfo,
+} from "../controllers/students.js";
 
 const router = express.Router();
 
-let students = [];
+router.get("/", getStudent);
 
-router.get("/", (req, res) => {
-  res.send(students);
-});
-
-router.post("/", (req, res) => {
-  const student = req.body;
-  students.push({ ...student, id: uuidv4() });
-  res.send(
-    `Student with the name ${student.firstName} has been successfully added`
-  );
-});
+router.post("/", createStudent);
 
 // => req.params
-router.get("/:id", (req, res) => {
-  const { id } = req.params;
+router.get("/:id", getStudentById);
 
-  const foundStudent = students.find((student) => student.id === id);
-  res.send(foundStudent);
-});
+router.delete("/:id", deleteStudents);
 
-router.delete("/:id", (req, res) => {
-  const { id } = req.params;
-
-  students = students.filter((student) => student.id !== id);
-
-  res.send(`Student with the id ${id} deleted from the database`);
-});
-
-router.patch("/:id", (req, res) => {
-  const { id } = req.params;
-  const { firstName, lastName, age } = req.body;
-  const student = students.find((student) => student.id === id);
-
-  if (firstName) {
-    student.firstName = firstName;
-  }
-  if (lastName) {
-    student.lastName = lastName;
-  }
-  if (age) {
-    student.age = age;
-  }
-
-  res.send(`User with the id ${id} has been updated`);
-});
+router.patch("/:id", updateStudentInfo);
 
 export default router;
